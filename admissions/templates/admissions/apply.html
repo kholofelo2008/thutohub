@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}New Admission Application{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white text-center py-4">
+            <h3>Admission Application Form</h3>
+            <p>Register your child for ThutoHub School</p>
+        </div>
+        <div class="card-body p-5">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-success btn-lg w-100 mt-4">
+                    <i class="bi bi-check-circle me-2"></i> Submit Application
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

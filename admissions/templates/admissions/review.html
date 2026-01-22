@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Review Admission - {{ application.child_full_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Review Application: {{ application.child_full_name }}</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5>Child Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Gender:</strong> {{ application.get_child_gender_display }}</p>
+                    <p><strong>Date of Birth:</strong> {{ application.child_date_of_birth }}</p>
+                    <p><strong>Grade Applied:</strong> {{ application.child_grade_applied }}</p>
+                    <p><strong>Current/Previous School:</strong> {{ application.current_school|default:"None" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5>Contact & Address</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Parent:</strong> {{ application.parent.username }} ({{ application.parent_email|default:"No email" }})</p>
+                    <p><strong>Phone:</strong> {{ application.parent_phone }}</p>
+                    <p><strong>Address:</strong> {{ application.residential_address|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-light">
+            <h5>Uploaded Documents</h5>
+        </div>
+        <div class="card-body">
+            {% if application.birth_certificate %}
+            <p>Birth Certificate: <a href="{{ application.birth_certificate.url }}" target="_blank" class="text-primary">View/Download</a></p>
+            {% endif %}
+            {% if application.proof_of_residence %}
+            <p>Proof of Residence: <a href="{{ application.proof_of_residence.url }}" target="_blank" class="text-primary">View/Download</a></p>
+            {% endif %}
+            {% if application.immunization_record %}
+            <p>Immunization Record: <a href="{{ application.immunization_record.url }}" target="_blank" class="text-primary">View/Download</a></p>
+            {% endif %}
+            {% if application.report_card %}
+            <p>Report Card: <a href="{{ application.report_card.url }}" target="_blank" class="text-primary">View/Download</a></p>
+            {% endif %}
+            {% if application.additional_docs %}
+            <p>Additional Documents: <a href="{{ application.additional_docs.url }}" target="_blank" class="text-primary">View/Download</a></p>
+            {% endif %}
+            {% if not application.birth_certificate and not application.proof_of_residence and not application.immunization_record and not application.report_card and not application.additional_docs %}
+            <p class="text-muted">No documents uploaded.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <form method="post" class="card shadow-sm">
+        <div class="card-header bg-warning text-dark">
+            <h5>Admin Review</h5>
+        </div>
+        <div class="card-body">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Review Notes / Reason</label>
+                <textarea name="admin_notes" class="form-control" rows="4">{{ application.admin_notes }}</textarea>
+            </div>
+            <div class="d-grid gap-3 d-md-block">
+                <button type="submit" name="status" value="approved" class="btn btn-success btn-lg">Approve</button>
+                <button type="submit" name="status" value="rejected" class="btn btn-danger btn-lg">Reject</button>
+                <button type="submit" name="status" value="waitlist" class="btn btn-warning btn-lg">Waitlist</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

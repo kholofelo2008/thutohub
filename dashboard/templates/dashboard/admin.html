@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - ThutoHub{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="mb-0">Admin Dashboard</h2>
+        <span class="badge bg-dark fs-5">Welcome, {{ user.username }}</span>
+    </div>
+
+    <!-- Key Stats Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-sm-6">
+            <div class="card bg-primary text-white shadow border-0 h-100 text-center">
+                <div class="card-body py-4">
+                    <i class="bi bi-people-fill fs-1 mb-3 d-block"></i>
+                    <h3>{{ total_users }}</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card bg-success text-white shadow border-0 h-100 text-center">
+                <div class="card-body py-4">
+                    <i class="bi bi-mortarboard-fill fs-1 mb-3 d-block"></i>
+                    <h3>{{ total_students }}</h3>
+                    <p>Students</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card bg-info text-white shadow border-0 h-100 text-center">
+                <div class="card-body py-4">
+                    <i class="bi bi-person-badge-fill fs-1 mb-3 d-block"></i>
+                    <h3>{{ total_teachers }}</h3>
+                    <p>Teachers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card bg-warning text-dark shadow border-0 h-100 text-center">
+                <div class="card-body py-4">
+                    <i class="bi bi-people-fill fs-1 mb-3 d-block"></i>
+                    <h3>{{ total_parents }}</h3>
+                    <p>Parents</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admissions Overview -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card bg-danger text-white shadow border-0 h-100 text-center">
+                <div class="card-body py-4">
+                    <h5>Pending Admissions</h5>
+                    <h1 class="display-4 mb-0">{{ pending_admissions }}</h1>
+                    <a href="{% url 'admissions:list' %}" class="btn btn-light btn-sm mt-3">Review Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white shadow border-0 h-100 text-center">
+                <div class="card-body py-4">
+                    <h5>Approved</h5>
+                    <h1 class="display-4 mb-0">{{ approved_admissions }}</h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-secondary text-white shadow border-0 h-100 text-center">
+                <div class="card-body py-4">
+                    <h5>Rejected</h5>
+                    <h1 class="display-4 mb-0">{{ rejected_admissions }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row g-4">
+        <!-- Recent Announcements -->
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Recent Announcements</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% for ann in recent_announcements %}
+                    <div class="border-bottom p-3">
+                        <h6 class="mb-1">{{ ann.title }}</h6>
+                        <small class="text-muted">
+                            By {{ ann.author.username }} • {{ ann.created_at|date:"d M Y H:i" }}
+                        </small>
+                    </div>
+                    {% empty %}
+                    <p class="p-4 text-center text-muted">No recent announcements</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Resources -->
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Recent Resources Uploaded</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% for res in recent_resources %}
+                    <div class="border-bottom p-3">
+                        <h6 class="mb-1">{{ res.title }}</h6>
+                        <small class="text-muted">
+                            By {{ res.uploaded_by.username }} • {{ res.created_at|date:"d M Y" }}
+                        </small>
+                    </div>
+                    {% empty %}
+                    <p class="p-4 text-center text-muted">No recent resources</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-5 text-center">
+        <a href="{% url 'admissions:list' %}" class="btn btn-outline-primary btn-lg me-3">
+            Review Admissions
+        </a>
+        <a href="{% url 'accounts:logout' %}" class="btn btn-outline-danger btn-lg">
+            Logout
+        </a>
+    </div>
+</div>
+{% endblock %}

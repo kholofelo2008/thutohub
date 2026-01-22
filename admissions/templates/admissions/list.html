@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Admission Applications{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Admission Applications</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Child Name</th>
+                    <th>Grade</th>
+                    <th>Parent</th>
+                    <th>Submitted</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr>
+                    <td>{{ app.child_full_name }}</td>
+                    <td>{{ app.child_grade_applied }}</td>
+                    <td>{{ app.parent.username }}</td>
+                    <td>{{ app.submitted_at|date:"d M Y" }}</td>
+                    <td>
+                        <span class="badge {% if app.status == 'approved' %}bg-success{% elif app.status == 'rejected' %}bg-danger{% elif app.status == 'waitlist' %}bg-warning{% else %}bg-secondary{% endif %}">
+                            {{ app.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'admissions:review' app.pk %}" class="btn btn-sm btn-outline-primary">Review</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">No applications submitted yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

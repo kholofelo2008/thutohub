@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block title %}Teacher Dashboard - ThutoHub{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Teacher Dashboard</h1>
+
+    <div class="alert alert-success text-center">
+        <h4>Welcome back, Teacher {{ user.get_full_name|default:user.username }}!</h4>
+        <p>You are now in the teacher portal.</p>
+        <p>From here you can upload resources, post announcements, chat with learners, etc.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center mt-4">
+        <div class="col-md-4">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <i class="bi bi-upload fs-1 text-primary mb-3 d-block"></i>
+                    <h5>Upload Resources</h5>
+                    <p>Share notes, PDFs, videos with your class</p>
+                    <a href="{% url 'resources:upload' %}"  class="btn btn-outline-primary btn-sm">Go to Upload</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <i class="bi bi-megaphone fs-1 text-success mb-3 d-block"></i>
+                    <h5>Post Announcements</h5>
+                    <p>Share school news or reminders</p>
+                    <a href="{% url 'announcements:create' %}" class="btn btn-outline-success btn-sm">Create Post</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <i class="bi bi-chat-dots fs-1 text-info mb-3 d-block"></i>
+                    <h5>Messages</h5>
+                    <p>Chat with students privately</p>
+                    <a href="#" class="btn btn-outline-info btn-sm">Open Inbox</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{% url 'accounts:logout' %}" class="btn btn-outline-danger">Logout</a>
+    </div>
+</div>
+<div class="card mt-4 shadow">
+    <div class="card-header bg-info text-white d-flex justify-content-between">
+        <h5>Latest Announcements</h5>
+        <a href="{% url 'announcements:list' %}" class="btn btn-sm btn-light">View All</a>
+    </div>
+    <div class="card-body">
+        {% for ann in latest_announcements %}
+        <div class="border-bottom py-2">
+            <h6>{{ ann.title }}</h6>
+            <p class="small mb-1">{{ ann.content|truncatewords:30 }}</p>
+            <small class="text-muted">{{ ann.created_at|date:"d M" }}</small>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">No recent announcements</p>
+        {% endfor %}
+    </div>
+</div>
+<div class="card shadow text-center">
+    <div class="card-body">
+        <i class="bi bi-chat-dots-fill fs-1 text-info mb-3 d-block"></i>
+        <h5>Messages & Chat</h5>
+        <p>Communicate privately with learners or reply to student questions</p>
+        <a href="{% url 'chat:inbox' %}" class="btn btn-outline-info mt-2">
+            <i class="bi bi-chat-dots me-1"></i> Open Messages
+        </a>
+        <a href="{% url 'chat:my_learners' %}" class="btn btn-outline-info mt-2">
+    <i class="bi bi-people me-1"></i> Message My Learners
+</a>
+    </div>
+</div>
+{% endblock %}

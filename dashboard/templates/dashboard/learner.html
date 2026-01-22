@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Learner Dashboard - ThutoHub{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h2 class="mb-0">Hello, {{ user.first_name|default:user.username }}!</h2>
+            <p class="text-muted">Your personalized learning space. Grade: 10 | Term: 1</p>
+        </div>
+        <div class="col-auto">
+            <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'img/default-avatar.png' %}{% endif %}" class="rounded-circle" width="50" height="50" alt="Profile">
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Quick Stats -->
+        <div class="col-md-3">
+            <div class="card bg-primary text-white shadow border-0 h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-bar-chart-fill fs-1 mb-2"></i>
+                    <h3>85%</h3>
+                    <p>Progress</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white shadow border-0 h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-envelope-fill fs-1 mb-2"></i>
+                    <h3>{{ unread_messages }}</h3>
+                    <p>Unread Messages</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white shadow border-0 h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-bell-fill fs-1 mb-2"></i>
+                    <h3>3</h3>
+                    <p>New Announcements</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark shadow border-0 h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-trophy-fill fs-1 mb-2"></i>
+                    <h3>5</h3>
+                    <p>Badges Earned</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5 g-4">
+        <!-- Recent Resources -->
+        <div class="col-lg-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Resources</h5>
+                    <a href="{% url 'resources:list' %}" class="btn btn-sm btn-light">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for resource in recent_resources %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <div>
+                                <h6>{{ resource.title }}</h6>
+                                <small class="text-muted">{{ resource.subject }} • Uploaded {{ resource.uploaded_at|date:"d M" }}</small>
+                            </div>
+                            <a href="{{ resource.file.url }}" class="btn btn-sm btn-outline-primary">Download</a>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-muted">No resources yet. Check back soon!</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements Feed -->
+        <div class="col-lg-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Latest Announcements</h5>
+                    <a href="{% url 'announcements:list' %}" class="btn btn-sm btn-light">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for ann in announcements %}
+                        <li class="list-group-item">
+                            <h6>{{ ann.title }}</h6>
+                            <p class="mb-1 small">{{ ann.content|truncatewords:20 }}</p>
+                            <small class="text-muted">By {{ ann.author }} • {{ ann.created_at|date:"d M" }}</small>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-muted">No announcements yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card mt-4 shadow">
+    <div class="card-header bg-info text-white d-flex justify-content-between">
+        <h5>Latest Announcements</h5>
+        <a href="{% url 'announcements:list' %}" class="btn btn-sm btn-light">View All</a>
+    </div>
+    <div class="card-body">
+        {% for ann in latest_announcements %}
+        <div class="border-bottom py-2">
+            <h6>{{ ann.title }}</h6>
+            <p class="small mb-1">{{ ann.content|truncatewords:30 }}</p>
+            <small class="text-muted">{{ ann.created_at|date:"d M" }}</small>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">No recent announcements</p>
+        {% endfor %}
+    </div>
+</div>
+<!-- Recent Resources Preview -->
+<div class="card shadow mt-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Recent Learning Resources</h5>
+        <a href="{% url 'resources:list' %}" class="btn btn-sm btn-light">View All</a>
+    </div>
+    <div class="card-body p-0">
+        {% for resource in latest_resources %}
+        <div class="border-bottom p-3">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="mb-1">{{ resource.title }}</h6>
+                    <p class="small mb-1 text-muted">
+                        {{ resource.subject }} • Grade {{ resource.grade|default:"All" }}
+                    </p>
+                    <small class="text-muted">
+                        By {{ resource.uploaded_by.username }} • {{ resource.created_at|date:"d M" }}
+                    </small>
+                </div>
+                <a href="{{ resource.file.url }}" class="btn btn-sm btn-outline-primary" download>
+                    <i class="bi bi-download"></i>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="p-5 text-center text-muted">
+            <i class="bi bi-folder-x fs-2 d-block mb-3"></i>
+            No new resources yet.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="card shadow text-center">
+    <div class="card-body">
+        <i class="bi bi-chat-dots-fill fs-1 text-primary mb-3 d-block"></i>
+        <h5>Messages from Teachers</h5>
+        <p>Check for private messages or homework clarifications</p>
+        <a href="{% url 'chat:inbox' %}" class="btn btn-outline-primary mt-2">
+            <i class="bi bi-inbox-fill me-1"></i> Open Inbox
+        </a>
+    </div>
+</div>
+<!-- Example card or button group -->
+<div class="card shadow text-center mt-4">
+    <div class="card-body">
+        <i class="bi bi-people-fill fs-1 text-primary mb-3 d-block"></i>
+        <h5>Message Classmates</h5>
+        <p>Chat with other learners for group study or questions</p>
+        <a href="{% url 'chat:my_classmates' %}" class="btn btn-outline-primary mt-2">
+            <i class="bi bi-chat-dots me-1"></i> Find Classmates
+        </a>
+    </div>
+</div>
+<!-- Latest Announcements Preview (already added earlier, but confirm) -->
+
+{% endblock %}
