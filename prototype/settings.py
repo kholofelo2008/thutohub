@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-a1vfi$4xsk)7n1vm3@ma=y=m&f7xco^c$(f-dw*1q7w#d_tjwt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = [*.onrender.com]
+ALLOWED_HOSTS = [thutohub.onrender.com]
 
 
 # Application definition
